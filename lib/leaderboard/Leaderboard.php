@@ -78,6 +78,24 @@ class Leaderboard {
 		}
 	}
 	
+	public function aroundMe($member, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
+		$reverseRankForMember = $this->_redis_connection->zRevRank($this->_leaderboard_name, $member);
+		
+		$startingOffset = $reverseRankForMember - (Leaderboard::DEFAULT_PAGE_SIZE / 2);
+		if ($startingOffset < 0) {
+			$startingOffset = 0;
+		}
+		
+		$endingOffset = ($startingOffset + Leaderboard::DEFAULT_PAGE_SIZE) - 1;
+		
+		$leaderData = $this->_redis_connection->zRevRange($this->_leaderboard_name, $startingOffset, $endingOffset, $withScores);
+		if (!is_null($leaderData)) {
+			return $this->massageLeaderData($leaderData, $withScores, $withRank, $useZeroIndexForRank);
+		} else {
+			return NULL;
+		}
+	}
+		
 	private function massageLeaderData($leaders, $withScores, $withRank, $useZeroIndexForRank) {
 		$memberAttribute = true;
 		$leaderData = array();

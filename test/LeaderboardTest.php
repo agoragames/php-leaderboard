@@ -103,6 +103,25 @@ class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(1, $leaders[0]['score']);
 		$this->assertEquals(26, $leaders[0]['rank']);
 	}
+	
+	function testAroundMe() {
+		$leaderboard = new Leaderboard('leaderboard');
+	
+		for ($i = 1; $i <= Leaderboard::DEFAULT_PAGE_SIZE * 3 + 1; $i++) {
+		    $leaderboard->addMember($i, "member_{$i}");
+		}
+		
+		$this->assertEquals(Leaderboard::DEFAULT_PAGE_SIZE * 3 + 1, $leaderboard->totalMembers());
+		
+		$leadersAroundMe = $leaderboard->aroundMe('member_30');
+		$this->assertEquals(Leaderboard::DEFAULT_PAGE_SIZE / 2, count($leadersAroundMe) / 2);
+
+		$leadersAroundMe = $leaderboard->aroundMe('member_1');
+		$this->assertEquals(ceil(Leaderboard::DEFAULT_PAGE_SIZE / 2 + 1), count($leadersAroundMe));
+
+		$leadersAroundMe = $leaderboard->aroundMe('member_76');
+		$this->assertEquals(Leaderboard::DEFAULT_PAGE_SIZE / 2, count($leadersAroundMe) / 2);
+	}
 }
 
 ?>
