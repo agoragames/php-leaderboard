@@ -38,6 +38,19 @@ class Leaderboard {
 	public function totalPages() {
 		return ceil($this->totalMembers() / Leaderboard::DEFAULT_PAGE_SIZE);
 	}
+	
+	public function rankFor($member, $useZeroIndexForRank = false) {
+	 	$rank = $this->_redis_connection->zRevRank($this->_leaderboard_name, $member);
+		if ($useZeroIndexForRank === false) {
+			$rank += 1;
+		}
+		
+		return $rank;
+	}
+	
+	public function scoreFor($member) {
+		return $this->_redis_connection->zScore($this->_leaderboard_name, $member);
+	}
 }
 
 ?>
