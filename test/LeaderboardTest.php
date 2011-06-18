@@ -14,15 +14,6 @@ class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
     protected function tearDown() { 
 		$this->redis->close();
     }
-
-	function testAbleToEstablishConnectionToRedis() {
-		$this->assertEquals('+PONG', $this->redis->ping());
-	}
-	
-	function testAbleToSetAKeyToAValue() {
-		$this->redis->set('key', 'value');
-		$this->assertEquals('value', $this->redis->get('key'));
-	}
 	
 	function testVersion() {
 		$this->assertEquals('1.0.0', Leaderboard::VERSION);
