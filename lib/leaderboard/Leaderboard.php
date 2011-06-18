@@ -41,7 +41,7 @@ class Leaderboard {
 	
 	public function rankFor($member, $useZeroIndexForRank = false) {
 	 	$rank = $this->_redis_connection->zRevRank($this->_leaderboard_name, $member);
-		if ($useZeroIndexForRank === false) {
+		if ($useZeroIndexForRank == false) {
 			$rank += 1;
 		}
 		
@@ -51,6 +51,53 @@ class Leaderboard {
 	public function scoreFor($member) {
 		return $this->_redis_connection->zScore($this->_leaderboard_name, $member);
 	}
+	
+	public function leaders($currentPage, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
+		if ($currentPage < 1) {
+			$currentPage = 1;
+		}
+		
+		if ($currentPage > $this->totalPages()) {
+			$currentPage = $this->totalPages();
+		}
+		
+		$indexForRedis = $currentPage - 1;
+		
+		$startingOffset = ($indexForRedis * Leaderboard::DEFAULT_PAGE_SIZE);
+		if ($startingOffset < 0) {
+			$startingOffset = 0;
+		}
+		
+		$endingOffset = ($startingOffset + Leaderboard::DEFAULT_PAGE_SIZE) - 1;
+		
+		$leaderData = $this->_redis_connection->zRevRange($this->_leaderboard_name, $startingOffset, $endingOffset, $withScores);
+		if (!is_null($leaderData)) {
+			return $this->massageLeaderData($leaderData, $withScores, $withRank, $useZeroIndexForRank);
+		} else {
+			return NULL;
+		}
+	}
+	
+	private function massageLeaderData($leaders, $withScores, $withRank, $useZeroIndexForRank) {
+		$memberAttribute = true;
+		$leaderData = array();
+		
+		$memberData = array();
+		foreach ($leaders as $key => $value) {
+
+			$memberData['member'] = $key;
+			$memberData['score'] = $value;
+
+			if ($withRank) {
+				$memberData['rank'] = $this->rankFor($key, $useZeroIndexForRank);
+			}
+
+			array_push($leaderData, $memberData);
+			$memberData = array();
+		}
+		
+		return $leaderData;
+	}	
 }
 
 ?>
