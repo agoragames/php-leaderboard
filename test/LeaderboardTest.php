@@ -50,6 +50,12 @@ class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(1, $leaderboard->removeMember('david'));
 		$this->assertEquals(0, $this->redis->zSize('leaderboard'));
 	}
+
+	function testTotalMembersInLeaderboard() {
+		$leaderboard = new Leaderboard('leaderboard');
+		$this->assertEquals(1, $leaderboard->addMember(69, 'david'));
+		$this->assertEquals(1, $leaderboard->totalMembers());
+	}
 }
 
 ?>

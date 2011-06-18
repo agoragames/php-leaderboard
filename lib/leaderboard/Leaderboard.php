@@ -30,6 +30,10 @@ class Leaderboard {
 	public function removeMember($member) {
 		return $this->_redis_connection->zRem($this->_leaderboard_name, $member);
 	}
+	
+	public function totalMembers() {
+		return $this->_redis_connection->zCard($this->_leaderboard_name);
+	}
 }
 
 ?>
