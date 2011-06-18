@@ -34,6 +34,10 @@ class Leaderboard {
 	public function totalMembers() {
 		return $this->_redis_connection->zCard($this->_leaderboard_name);
 	}
+	
+	public function totalPages() {
+		return ceil($this->totalMembers() / Leaderboard::DEFAULT_PAGE_SIZE);
+	}
 }
 
 ?>

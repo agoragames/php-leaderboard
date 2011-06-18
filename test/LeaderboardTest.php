@@ -38,23 +38,32 @@ class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($leaderboard->close());
 	}
 	
-	function testAddMemberToLeaderboard() {
+	function testAddMember() {
 		$leaderboard = new Leaderboard('leaderboard');
 		$this->assertEquals(1, $leaderboard->addMember(69, 'david'));
 		$this->assertEquals(1, $this->redis->zSize('leaderboard'));
 	}
 
-	function testRemoveMemberFromLeaderboard() {
+	function testRemoveMember() {
 		$leaderboard = new Leaderboard('leaderboard');
 		$this->assertEquals(1, $leaderboard->addMember(69, 'david'));
 		$this->assertEquals(1, $leaderboard->removeMember('david'));
 		$this->assertEquals(0, $this->redis->zSize('leaderboard'));
 	}
 
-	function testTotalMembersInLeaderboard() {
+	function testTotalMembers() {
 		$leaderboard = new Leaderboard('leaderboard');
 		$this->assertEquals(1, $leaderboard->addMember(69, 'david'));
 		$this->assertEquals(1, $leaderboard->totalMembers());
+	}
+	
+	function testTotalPages() {
+		$leaderboard = new Leaderboard('leaderboard');
+		for ($i = 1; $i <= Leaderboard::DEFAULT_PAGE_SIZE + 1; $i++) {
+		    $leaderboard->addMember($i, "member_{$i}");
+		}
+		
+		$this->assertEquals(2, $leaderboard->totalPages());
 	}
 }
 
