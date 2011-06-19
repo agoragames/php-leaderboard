@@ -1,6 +1,6 @@
 <?php
 
-require '/Users/dczarnecki/projects/php-leaderboard/lib/Leaderboard.php';
+require "{dirname(__FILE__)}/../lib/Leaderboard.php";
 
 class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
     public $redis;
