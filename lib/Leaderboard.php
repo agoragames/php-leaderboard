@@ -90,20 +90,32 @@ class Leaderboard {
         
         return $rank;
     }
-    
+
     public function scoreFor($member) {
-        return $this->_redis_connection->zScore($this->_leaderboard_name, $member);
+        return $this->scoreForIn($this->_leaderboard_name, $member);
+    }
+    
+    public function scoreForIn($leaderboardName, $member) {
+        return $this->_redis_connection->zScore($leaderboardName, $member);
     }
     
     public function checkMember($member) {
-        return !($this->_redis_connection->zScore($this->_leaderboard_name, $member) == NULL);        
+        return $this->checkMemberIn($this->_leaderboard_name, $member);      
+    }
+
+    public function checkMemberIn($leaderboardName, $member) {
+        return !($this->_redis_connection->zScore($leaderboardName, $member) == NULL);        
+    }
+
+    public function scoreAndRankFor($member, $useZeroIndexForRank = false) {
+        return $this->scoreAndRankForIn($this->_leaderboard_name, $member, $useZeroIndexForRank);
     }
     
-    public function scoreAndRankFor($member, $useZeroIndexForRank = false) {
+    public function scoreAndRankForIn($leaderboardName, $member, $useZeroIndexForRank = false) {
         $memberData = array();
         $memberData['member'] = $member;
-        $memberData['score'] = $this->scoreFor($member);
-        $memberData['rank'] = $this->rankFor($member, $useZeroIndexForRank);
+        $memberData['score'] = $this->scoreForIn($leaderboardName, $member);
+        $memberData['rank'] = $this->rankForIn($leaderboardName, $member, $useZeroIndexForRank);
         
         return $memberData;
     }
