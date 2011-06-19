@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="test/bootstrap.php">
+<phpunit bootstrap="test/bootstrap.php" colors="true" verbose="true" syntaxCheck="true" strict="true">
     <testsuites>
-        <testsuite name="leaderboard Test Suite">
+        <testsuite name="php-leaderboard Test Suite">
             <directory>test/</directory>
         </testsuite>
     </testsuites>
