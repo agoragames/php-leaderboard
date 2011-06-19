@@ -43,6 +43,10 @@ class Leaderboard {
         return $this->_redis_connection->zCount($this->_leaderboard_name, $minScore, $maxScore);
     }
     
+    public function changeScoreFor($member, $delta) {
+        return $this->_redis_connection->zIncrBy($this->_leaderboard_name, $delta, $member);
+    }
+    
     public function rankFor($member, $useZeroIndexForRank = false) {
         $rank = $this->_redis_connection->zRevRank($this->_leaderboard_name, $member);
         if ($useZeroIndexForRank == false) {
