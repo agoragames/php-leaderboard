@@ -8,11 +8,18 @@ class Leaderboard {
     
     private $_leaderboard_name;
     private $_redis_connection;
+    private $_page_size;
     
-    public function __construct($name) {
+    public function __construct($name, $host = Leaderboard::DEFAULT_HOST, $port = Leaderboard::DEFAULT_PORT, $pageSize = Leaderboard::DEFAULT_PAGE_SIZE) {
         $this->_leaderboard_name = $name;
         $this->_redis_connection = new Redis();
-        $this->_redis_connection->connect(Leaderboard::DEFAULT_HOST, Leaderboard::DEFAULT_PORT);
+        $this->_redis_connection->connect($host, $port);
+        
+        if ($pageSize < 1) {
+            $pageSize = Leaderboard::DEFAULT_PAGE_SIZE;
+        }
+        
+        $this->_page_size = $pageSize;
     }
     
     public function getLeaderboardName() {
@@ -36,7 +43,7 @@ class Leaderboard {
     }
     
     public function totalPages() {
-        return ceil($this->totalMembers() / Leaderboard::DEFAULT_PAGE_SIZE);
+        return ceil($this->totalMembers() / $this->_page_size);
     }
     
     public function totalMembersInScoreRange($minScore, $maxScore) {
@@ -88,12 +95,12 @@ class Leaderboard {
         
         $indexForRedis = $currentPage - 1;
         
-        $startingOffset = ($indexForRedis * Leaderboard::DEFAULT_PAGE_SIZE);
+        $startingOffset = ($indexForRedis * $this->_page_size);
         if ($startingOffset < 0) {
             $startingOffset = 0;
         }
         
-        $endingOffset = ($startingOffset + Leaderboard::DEFAULT_PAGE_SIZE) - 1;
+        $endingOffset = ($startingOffset + $this->_page_size) - 1;
         
         $leaderData = $this->_redis_connection->zRevRange($this->_leaderboard_name, $startingOffset, $endingOffset, $withScores);
         if (!is_null($leaderData)) {
@@ -106,12 +113,12 @@ class Leaderboard {
     public function aroundMe($member, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
         $reverseRankForMember = $this->_redis_connection->zRevRank($this->_leaderboard_name, $member);
         
-        $startingOffset = $reverseRankForMember - (Leaderboard::DEFAULT_PAGE_SIZE / 2);
+        $startingOffset = $reverseRankForMember - ($this->_page_size / 2);
         if ($startingOffset < 0) {
             $startingOffset = 0;
         }
         
-        $endingOffset = ($startingOffset + Leaderboard::DEFAULT_PAGE_SIZE) - 1;
+        $endingOffset = ($startingOffset + $this->_page_size) - 1;
         
         $leaderData = $this->_redis_connection->zRevRange($this->_leaderboard_name, $startingOffset, $endingOffset, $withScores);
         if (!is_null($leaderData)) {
