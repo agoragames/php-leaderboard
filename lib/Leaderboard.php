@@ -27,6 +27,10 @@ class Leaderboard {
     }
     
     public function setPageSize($pageSize) {
+        if ($pageSize < 1) {
+            $pageSize = Leaderboard::DEFAULT_PAGE_SIZE;
+        }
+        
         $this->_page_size = $pageSize;
     }
 
