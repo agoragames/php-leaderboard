@@ -106,6 +106,18 @@ class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
         $this->assertEquals(14, $leaderboard->scoreFor('member_14'));
     }
     
+    function testScoreAndRankFor() {
+        $leaderboard = new Leaderboard('leaderboard');
+        for ($i = 1; $i <= 5; $i++) {
+            $leaderboard->addMember("member_{$i}", $i);
+        }
+        
+        $memberData = $leaderboard->scoreAndRankFor('member_1');
+        $this->assertEquals('member_1', $memberData['member']);
+        $this->assertEquals(1, $memberData['score']);
+        $this->assertEquals(5, $memberData['rank']);
+    }
+    
     function testLeaders() {
         $leaderboard = new Leaderboard('leaderboard');
         for ($i = 1; $i <= Leaderboard::DEFAULT_PAGE_SIZE + 1; $i++) {

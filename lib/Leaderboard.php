@@ -64,6 +64,15 @@ class Leaderboard {
         return !($this->_redis_connection->zScore($this->_leaderboard_name, $member) == NULL);        
     }
     
+    public function scoreAndRankFor($member, $useZeroIndexForRank = false) {
+        $memberData = array();
+        $memberData['member'] = $member;
+        $memberData['score'] = $this->scoreFor($member);
+        $memberData['rank'] = $this->rankFor($member, $useZeroIndexForRank);
+        
+        return $memberData;
+    }
+    
     public function leaders($currentPage, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
         if ($currentPage < 1) {
             $currentPage = 1;
