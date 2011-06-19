@@ -57,6 +57,15 @@ class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $leaderboard->totalPages());
     }
     
+    function testTotalMembersInScoreRange() {
+        $leaderboard = new Leaderboard('leaderboard');
+        for ($i = 1; $i <= Leaderboard::DEFAULT_PAGE_SIZE + 1; $i++) {
+            $leaderboard->addMember($i, "member_{$i}");
+        }
+
+        $this->assertEquals(3, $leaderboard->totalMembersInScoreRange(2, 4));
+    }
+    
     function testRankFor() {
         $leaderboard = new Leaderboard('leaderboard');
         for ($i = 1; $i <= Leaderboard::DEFAULT_PAGE_SIZE + 1; $i++) {
@@ -97,7 +106,6 @@ class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
     
     function testAroundMe() {
         $leaderboard = new Leaderboard('leaderboard');
-    
         for ($i = 1; $i <= Leaderboard::DEFAULT_PAGE_SIZE * 3 + 1; $i++) {
             $leaderboard->addMember($i, "member_{$i}");
         }

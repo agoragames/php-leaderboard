@@ -39,6 +39,10 @@ class Leaderboard {
         return ceil($this->totalMembers() / Leaderboard::DEFAULT_PAGE_SIZE);
     }
     
+    public function totalMembersInScoreRange($minScore, $maxScore) {
+        return $this->_redis_connection->zCount($this->_leaderboard_name, $minScore, $maxScore);
+    }
+    
     public function rankFor($member, $useZeroIndexForRank = false) {
         $rank = $this->_redis_connection->zRevRank($this->_leaderboard_name, $member);
         if ($useZeroIndexForRank == false) {
