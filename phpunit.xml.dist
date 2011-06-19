@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="test/bootstrap.php" colors="true" verbose="true" syntaxCheck="true" strict="true">
+<phpunit bootstrap="test/phpunit.bootstrap.php" colors="true" verbose="true" syntaxCheck="true" strict="true">
     <testsuites>
         <testsuite name="php-leaderboard Test Suite">
             <directory>test/</directory>
@@ -9,7 +9,7 @@
 
     <filter>
         <whitelist>
-            <directory suffix=".php">lib/leaderboard/</directory>
+            <directory suffix=".php">lib/</directory>
         </whitelist>
     </filter>
 </phpunit>
