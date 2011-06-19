@@ -79,7 +79,11 @@ class Leaderboard {
     }
     
     public function rankFor($member, $useZeroIndexForRank = false) {
-        $rank = $this->_redis_connection->zRevRank($this->_leaderboard_name, $member);
+        return $this->rankForIn($this->_leaderboard_name, $member, $useZeroIndexForRank);
+    }
+    
+    public function rankForIn($leaderboardName, $member, $useZeroIndexForRank = false) {
+        $rank = $this->_redis_connection->zRevRank($leaderboardName, $member);
         if ($useZeroIndexForRank == false) {
             $rank += 1;
         }
