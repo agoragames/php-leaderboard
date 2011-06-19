@@ -73,6 +73,10 @@ class Leaderboard {
         return $memberData;
     }
     
+    public function removeMembersInScoreRange($minScore, $maxScore) {
+        return $this->_redis_connection->zRemRangeByScore($this->_leaderboard_name, $minScore, $maxScore);
+    }
+    
     public function leaders($currentPage, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
         if ($currentPage < 1) {
             $currentPage = 1;

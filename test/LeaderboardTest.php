@@ -118,6 +118,30 @@ class LeaderboardTestSuite extends PHPUnit_Framework_TestCase {
         $this->assertEquals(5, $memberData['rank']);
     }
     
+    function testRemoveMembersInScoreRange() {
+        $leaderboard = new Leaderboard('leaderboard');
+        for ($i = 1; $i <= 5; $i++) {
+            $leaderboard->addMember("member_{$i}", $i);
+        }
+
+        $this->assertEquals(5, $leaderboard->totalMembers());
+        
+        $leaderboard->addMember('cheater_1', 100);
+        $leaderboard->addMember('cheater_2', 101);
+        $leaderboard->addMember('cheater_3', 102);
+
+        $this->assertEquals(8, $leaderboard->totalMembers());
+        
+        $leaderboard->removeMembersInScoreRange(100, 102);
+
+        $this->assertEquals(5, $leaderboard->totalMembers());
+        
+        $leaders = $leaderboard->leaders(1);
+        foreach ($leaders as $key => $value) {
+            $this->assertLessThan(100, $value['score']);
+        }
+    }
+    
     function testLeaders() {
         $leaderboard = new Leaderboard('leaderboard');
         for ($i = 1; $i <= Leaderboard::DEFAULT_PAGE_SIZE + 1; $i++) {
