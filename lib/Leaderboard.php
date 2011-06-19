@@ -121,16 +121,24 @@ class Leaderboard {
     }
     
     public function removeMembersInScoreRange($minScore, $maxScore) {
-        return $this->_redis_connection->zRemRangeByScore($this->_leaderboard_name, $minScore, $maxScore);
+        return $this->removeMembersInScoreRangeIn($this->_leaderboard_name, $minScore, $maxScore);
+    }
+    
+    public function removeMembersInScoreRangeIn($leaderboardName, $minScore, $maxScore) {
+        return $this->_redis_connection->zRemRangeByScore($leaderboardName, $minScore, $maxScore);
     }
     
     public function leaders($currentPage, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
+        return $this->leadersIn($this->_leaderboard_name, $currentPage, $withScores, $withRank, $useZeroIndexForRank);
+    }
+    
+    public function leadersIn($leaderboardName, $currentPage, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
         if ($currentPage < 1) {
             $currentPage = 1;
         }
         
-        if ($currentPage > $this->totalPages()) {
-            $currentPage = $this->totalPages();
+        if ($currentPage > $this->totalPagesIn($leaderboardName)) {
+            $currentPage = $this->totalPagesIn($leaderboardName);
         }
         
         $indexForRedis = $currentPage - 1;
@@ -142,16 +150,20 @@ class Leaderboard {
         
         $endingOffset = ($startingOffset + $this->_page_size) - 1;
         
-        $leaderData = $this->_redis_connection->zRevRange($this->_leaderboard_name, $startingOffset, $endingOffset, $withScores);
+        $leaderData = $this->_redis_connection->zRevRange($leaderboardName, $startingOffset, $endingOffset, $withScores);
         if (!is_null($leaderData)) {
-            return $this->massageLeaderData($leaderData, $withScores, $withRank, $useZeroIndexForRank);
+            return $this->massageLeaderData($leaderboardName, $leaderData, $withScores, $withRank, $useZeroIndexForRank);
         } else {
             return NULL;
         }
     }
     
     public function aroundMe($member, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
-        $reverseRankForMember = $this->_redis_connection->zRevRank($this->_leaderboard_name, $member);
+        return $this->aroundMeIn($this->_leaderboard_name, $member, $withScores, $withRank, $useZeroIndexForRank);
+    }
+    
+    public function aroundMeIn($leaderboardName, $member, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
+        $reverseRankForMember = $this->_redis_connection->zRevRank($leaderboardName, $member);
         
         $startingOffset = $reverseRankForMember - ($this->_page_size / 2);
         if ($startingOffset < 0) {
@@ -160,24 +172,28 @@ class Leaderboard {
         
         $endingOffset = ($startingOffset + $this->_page_size) - 1;
         
-        $leaderData = $this->_redis_connection->zRevRange($this->_leaderboard_name, $startingOffset, $endingOffset, $withScores);
+        $leaderData = $this->_redis_connection->zRevRange($leaderboardName, $startingOffset, $endingOffset, $withScores);
         if (!is_null($leaderData)) {
-            return $this->massageLeaderData($leaderData, $withScores, $withRank, $useZeroIndexForRank);
+            return $this->massageLeaderData($leaderboardName, $leaderData, $withScores, $withRank, $useZeroIndexForRank);
         } else {
             return NULL;
         }
     }
     
     public function rankedInList($members, $withScores = true, $useZeroIndexForRank = false) {
+        return $this->rankedInListIn($this->_leaderboard_name, $members, $withScores, $useZeroIndexForRank);
+    }
+    
+    public function rankedInListIn($leaderboardName, $members, $withScores = true, $useZeroIndexForRank = false) {
         $leaderData = array();
         
         foreach ($members as $member) {
             $memberData = array();
             $memberData['member'] = $member;
             if ($withScores) {
-                $memberData['score'] = $this->scoreFor($member);
+                $memberData['score'] = $this->scoreForIn($leaderboardName, $member);
             }
-            $memberData['rank'] = $this->rankFor($member, $useZeroIndexForRank);
+            $memberData['rank'] = $this->rankForIn($leaderboardName, $member, $useZeroIndexForRank);
             
             array_push($leaderData, $memberData);
         }
@@ -185,7 +201,7 @@ class Leaderboard {
         return $leaderData;
     }
         
-    private function massageLeaderData($leaders, $withScores, $withRank, $useZeroIndexForRank) {
+    private function massageLeaderData($leaderboardName, $leaders, $withScores, $withRank, $useZeroIndexForRank) {
         $memberAttribute = true;
         $leaderData = array();
         
@@ -196,7 +212,7 @@ class Leaderboard {
             $memberData['score'] = $value;
 
             if ($withRank) {
-                $memberData['rank'] = $this->rankFor($key, $useZeroIndexForRank);
+                $memberData['rank'] = $this->rankForIn($leaderboardName, $key, $useZeroIndexForRank);
             }
 
             array_push($leaderData, $memberData);
