@@ -23,7 +23,7 @@ class Leaderboard {
         return $this->_redis_connection->close();
     }
     
-    public function addMember($score, $member) {
+    public function addMember($member, $score) {
         return $this->_redis_connection->zAdd($this->_leaderboard_name, $score, $member);
     }
     
@@ -58,6 +58,10 @@ class Leaderboard {
     
     public function scoreFor($member) {
         return $this->_redis_connection->zScore($this->_leaderboard_name, $member);
+    }
+    
+    public function checkMember($member) {
+        return !($this->_redis_connection->zScore($this->_leaderboard_name, $member) == NULL);        
     }
     
     public function leaders($currentPage, $withScores = true, $withRank = true, $useZeroIndexForRank = false) {
