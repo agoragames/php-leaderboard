@@ -31,15 +31,27 @@ class Leaderboard {
     }
     
     public function addMember($member, $score) {
-        return $this->_redis_connection->zAdd($this->_leaderboard_name, $score, $member);
+        return $this->addMemberTo($this->_leaderboard_name, $member, $score);
+    }
+    
+    public function addMemberTo($leaderboardName, $member, $score) {
+        return $this->_redis_connection->zAdd($leaderboardName, $score, $member);
     }
     
     public function removeMember($member) {
-        return $this->_redis_connection->zRem($this->_leaderboard_name, $member);
+        return $this->removeMemberFrom($this->_leaderboard_name, $member);
+    }
+
+    public function removeMemberFrom($leaderboardName, $member) {
+        return $this->_redis_connection->zRem($leaderboardName, $member);
+    }
+
+    public function totalMembers() {
+        return $this->totalMembersIn($this->_leaderboard_name);
     }
     
-    public function totalMembers() {
-        return $this->_redis_connection->zCard($this->_leaderboard_name);
+    public function totalMembersIn($leaderboardName) {
+        return $this->_redis_connection->zCard($leaderboardName);
     }
     
     public function totalPages() {
