@@ -55,15 +55,27 @@ class Leaderboard {
     }
     
     public function totalPages() {
-        return ceil($this->totalMembers() / $this->_page_size);
+        return $this->totalPagesIn($this->_leaderboard_name);
+    }
+
+    public function totalPagesIn($leaderboardName) {
+        return ceil($this->totalMembersIn($leaderboardName) / $this->_page_size);
     }
     
     public function totalMembersInScoreRange($minScore, $maxScore) {
-        return $this->_redis_connection->zCount($this->_leaderboard_name, $minScore, $maxScore);
+        return $this->totalMembersInScoreRangeIn($this->_leaderboard_name, $minScore, $maxScore);
+    }
+    
+    public function totalMembersInScoreRangeIn($leaderboardName, $minScore, $maxScore) {
+        return $this->_redis_connection->zCount($leaderboardName, $minScore, $maxScore);        
     }
     
     public function changeScoreFor($member, $delta) {
-        return $this->_redis_connection->zIncrBy($this->_leaderboard_name, $delta, $member);
+        return $this->changeScoreForIn($this->_leaderboard_name, $member, $delta);
+    }
+
+    public function changeScoreForIn($leaderboardName, $member, $delta) {
+        return $this->_redis_connection->zIncrBy($leaderboardName, $delta, $member);
     }
     
     public function rankFor($member, $useZeroIndexForRank = false) {
