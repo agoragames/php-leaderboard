@@ -120,6 +120,23 @@ class Leaderboard {
             return NULL;
         }
     }
+    
+    public function rankedInList($members, $withScores = true, $useZeroIndexForRank = false) {
+        $leaderData = array();
+        
+        foreach ($members as $member) {
+            $memberData = array();
+            $memberData['member'] = $member;
+            if ($withScores) {
+                $memberData['score'] = $this->scoreFor($member);
+            }
+            $memberData['rank'] = $this->rankFor($member, $useZeroIndexForRank);
+            
+            array_push($leaderData, $memberData);
+        }
+        
+        return $leaderData;
+    }
         
     private function massageLeaderData($leaders, $withScores, $withRank, $useZeroIndexForRank) {
         $memberAttribute = true;
