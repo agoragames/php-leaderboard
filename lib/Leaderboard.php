@@ -25,6 +25,10 @@ class Leaderboard {
     public function getLeaderboardName() {
         return $this->_leaderboard_name;
     }
+    
+    public function setPageSize($pageSize) {
+        $this->_page_size = $pageSize;
+    }
 
     public function close() {
         return $this->_redis_connection->close();
