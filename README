@@ -4,6 +4,10 @@ Leaderboards backed by Redis in PHP, http://redis.io.
 
 Builds off ideas proposed in http://blog.agoragames.com/2011/01/01/creating-high-score-tables-leaderboards-using-redis/.
 
+== Usage
+
+For now, look at the Ruby leaderboard documentation, https://github.com/agoragames/leaderboard, or the tests for usage.
+
 == Ports
 
 The following ports have been made of the leaderboard gem.
