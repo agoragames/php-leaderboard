@@ -4,6 +4,16 @@ Leaderboards backed by Redis in PHP, http://redis.io.
 
 Builds off ideas proposed in http://blog.agoragames.com/2011/01/01/creating-high-score-tables-leaderboards-using-redis/.
 
+== Ports
+
+The following ports have been made of the leaderboard gem.
+
+* Java: https://github.com/agoragames/java-leaderboard
+* NodeJS: https://github.com/omork/node-leaderboard
+* Python: https://github.com/agoragames/python-leaderboard
+* Ruby: https://github.com/agoragames/leaderboard
+* Scala: https://github.com/agoragames/scala-leaderboard
+
 == Contributing to php-leaderboard
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
